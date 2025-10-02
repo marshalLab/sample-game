@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stasiun Rahasia Pejuang Kemerdekaan</title>
+    <!-- Google Fonts for a thematic look -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto+Mono:wght=400;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS styling here */
+        :root {
+            --primary-color: #61dafb; /* Cyan */
+            --secondary-color: #f7b32b; /* Gold/Orange */
+            --background-color: #2c3e50; /* Dark Blue Gray */
+            --card-background: #34495e; /* Slightly lighter Dark Blue Gray */
+            --text-color: #ecf0f1; /* Light Gray */
+            --border-color: #4a6572; /* Muted Blue */
+            --shadow-color: rgba(0, 0, 0, 0.4);
+            --morse-light-on: #ffeb3b; /* Bright Yellow */
+        }
+
+        body {
+            font-family: 'Roboto Mono', monospace; /* Monospaced for tech feel */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            background-color: var(--card-background);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px var(--shadow-color);
+            width: 100%;
+            max-width: 1200px;
+            text-align: center;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+            position: relative;
+        }
+
+        @media (min-width: 992px) {
+            .container {
+                grid-template-columns: 2fr 1fr; /* Video on left, controls on right */
+            }
+        }
+
+        h1, h2, h3 {
+            font-family: 'Orbitron', sans-serif; /* Futuristic/Techy font */
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            text-shadow: 0 0 5px rgba(97, 218, 251, 0.5);
+        }
+        h1 { font-size: 2.8em; }
+        h2 { font-size: 1.8em; margin-bottom: 15px; color: var(--secondary-color); }
+        h3 { font-size: 1.4em; margin-bottom: 10px; }
+
+
+        /* --- Video Section --- */
+        .video-section {
+            grid-column: 1 / -1; /* Spans full width on small screens */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        @media (min-width: 992px) {
+            .video-section {
+                grid-column: 1 / 2; /* Left column on large screens */
+            }
+        }
+
+        .video-player {
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            position: relative;
+            background-color: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+        }
+
+        .video-player iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .video-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        /* --- Morse Section --- */
+        .morse-section {
+            grid-column: 1 / -1; /* Spans full width on small screens */
+        }
+        @media (min-width: 992px) {
+            .morse-section {
+                grid-column: 2 / 3; /* Right column on large screens */
+            }
+        }
+
+        textarea {
+            width: calc(100% - 20px);
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1.1em;
+            background-color: #3f51b5; /* Slightly different background for input */
+            color: var(--text-color);
+            resize: vertical;
+            min-height: 80px;
+            box-sizing: border-box;
+            box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.2);
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 10px rgba(97, 218, 251, 0.7);
+        }
+
+        #morseOutput {
+            background-color: #222d3a; /* Darker background */
+            color: var(--secondary-color); /* Gold color for Morse output */
+            padding: 15px;
+            border-radius: 8px;
+            min-height: 60px;
+            margin-bottom: 20px;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 1.2em;
+            text-align: left;
+            word-wrap: break-word;
+            border: 1px dashed var(--border-color);
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .morse-light-container {
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .morse-light {
+            width: 40px;
+            height: 40px;
+            background-color: #555;
+            border-radius: 50%;
+            transition: background-color 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .morse-light.on {
+            background-color: var(--morse-light-on); /* Bright yellow */
+            box-shadow: 0 0 15px var(--morse-light-on), 0 0 25px rgba(255, 235, 59, 0.6);
+        }
+
+        .button-group {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: var(--background-color);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        button.video-button {
+            background-color: var(--secondary-color);
+            color: var(--background-color);
+        }
+
+        button:hover {
+            background-color: #4fa3d1;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+        }
+        button.video-button:hover {
+            background-color: #d19f2a;
+        }
+
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        #speedControl {
+            margin-top: 20px;
+            width: 80%;
+            max-width: 300px;
+            -webkit-appearance: none;
+            height: 8px;
+            background: var(--border-color);
+            border-radius: 5px;
+            outline: none;
+            transition: opacity .2s;
+            cursor: pointer;
+        }
+
+        #speedControl::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(97, 218, 251, 0.7);
+        }
+
+        #speedControl::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(97, 218, 251, 0.7);
+        }
+
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: var(--text-color);
+            font-size: 1.05em;
+            margin-top: 15px;
+        }
+        label span {
+            color: var(--primary-color);
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            h1 { font-size: 2em; }
+            h2 { font-size: 1.5em; }
+            .container { padding: 20px; gap: 20px; }
+            button {
+                padding: 10px 18px;
+                font-size: 1em;
+            }
+            .video-controls {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>STASIUN RAHASIA PEJUANG KEMERDEKAAN INDONESIA</h1>
+
+        <div class="video-section">
+            <h2>Pesan Visual dari Sejarah</h2>
+            <div class="video-player">
+                <!-- YouTube iframe will be loaded here -->
+                <iframe id="youtubePlayer" width="560" height="315" src="https://www.youtube.com/embed/" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <div class="video-controls">
+                <button class="video-button" data-video-id="-j28H2uuFCg?si=fHhmLBC5UMFMeMPc" data-title="Pendudukan Jepang">Sejarah Pendudukan Jepang</button>
+                <button class="video-button" data-video-id="GKBJBWq5cAs?si=hWVcKk3J7Mk33G8z" data-title="Perjuangan Melawan Jepang">Perjuangan Melawan Jepang</button>
+                <button class="video-button" data-video-id="bu-di49udCI?si=pj8rFPjlLFQjjxpd" data-title=" Proklamasi Kemerdekaan">Jejak Proklamasi Kemerdekaan</button>
+            </div>
+        </div>
+
+        <div class="morse-section">
+            <h2>Pesan Rahasia Morse</h2>
+            <label for="textInput">Ketikkan Pesan Rahasia Anda:</label>
+            <textarea id="textInput" placeholder="Ketik di sini untuk menerjemahkan ke Kode Morse..." autofocus></textarea>
+
+            <div class="button-group">
+                <button id="playMorseButton">Dengarkan Kode Morse</button>
+                <button id="stopMorseButton">Stop</button>
+            </div>
+
+            <label for="morseOutput" style="margin-top: 20px;">Terjemahan Kode Morse:</label>
+            <div id="morseOutput"></div>
+
+            <div class="morse-light-container">
+                <div id="morseLight" class="morse-light"></div>
+            </div>
+
+            <label for="speedControl">Kecepatan Transmisi (WPM): <span id="wpmValue">20</span></label>
+            <input type="range" id="speedControl" min="5" max="60" value="20">
+        </div>
+
+        <!-- Optional: Tambahkan bagian decoding di sini jika ingin ada mode "menerjemahkan dari Morse"
+        <div class="morse-decoder-section">
+            <h2>Dekode Pesan Masuk</h2>
+            <div id="incomingMorseDisplay" style="background-color: #222d3a; color: var(--secondary-color); padding: 15px; border-radius: 8px; min-height: 60px; margin-bottom: 15px; text-align: left; word-wrap: break-word; border: 1px dashed var(--border-color);">
+                .--. . ... .- -. / -- .- ... ..- -.-
+            </div>
+            <textarea id="decodeTextInput" placeholder="Terjemahkan kode Morse di atas ke teks..." style="min-height: 60px;"></textarea>
+            <button id="checkDecodeButton">Cek Terjemahan</button>
+            <div id="decodeResult" style="margin-top: 10px; font-weight: bold;"></div>
+        </div>
+        -->
+
+    </div>
+
+    <script>
+        // JavaScript logic here
+        const textInput = document.getElementById('textInput');
+        const morseOutput = document.getElementById('morseOutput');
+        const playMorseButton = document.getElementById('playMorseButton');
+        const stopMorseButton = document.getElementById('stopMorseButton');
+        const morseLight = document.getElementById('morseLight');
+        const speedControl = document.getElementById('speedControl');
+        const wpmValue = document.getElementById('wpmValue');
+        const youtubePlayer = document.getElementById('youtubePlayer');
+        const videoButtons = document.querySelectorAll('.video-button');
+
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        let oscillator = null;
+        let gainNode = null;
+        let morsePlaying = false;
+        let currentTimeout = null;
+        let currentInterval = null; // Unused, can remove if not needed for blinking effects or other intervals
+
+        // Morse Code Dictionary (International Morse Code)
+        const morseCodeMap = {
+            'a': '.-', 'b': '-...', 'c': '-.-.', 'd': '-..', 'e': '.',
+            'f': '..-.', 'g': '--.', 'h': '....', 'i': '..', 'j': '.---',
+            'k': '-.-', 'l': '.-..', 'm': '--', 'n': '-.', 'o': '---',
+            'p': '.--.', 'q': '--.-', 'r': '.-.', 's': '...', 't': '-',
+            'u': '..-', 'v': '...-', 'w': '.--', 'x': '-..-', 'y': '-.--',
+            'z': '--..',
+            '0': '-----', '1': '.----', '2': '..---', '3': '...--', '4': '....-',
+            '5': '.....', '6': '-....', '7': '--...', '8': '---..', '9': '----.',
+            '.': '.-.-.-', ',': '--..--', '?': '..--..', "'": '.----.', '!': '-.-.--',
+            '/': '-..-.', '(': '-.--.', ')': '-.--.-', '&': '.-...', ':': '---...',
+            ';': '-.-.-.', '=': '-...-', '+': '.-.-.', '-': '-....-', '_': '..--.-',
+            '"': '.-..-.', '$': '...-..-', '@': '.--.-.', ' ': '/' // Space representation
+        };
+
+        // --- Morse Playback Functions ---
+        const ditDuration = (wpm) => {
+            // Standard formula: 1200ms / WPM for one unit (dit) duration
+            return 1200 / wpm;
+        };
+
+        const playTone = (duration) => {
+            if (!audioCtx) return;
+
+            // Clear any existing oscillator to prevent overlapping sounds
+            if (oscillator) {
+                try {
+                    oscillator.stop(0); // Stop immediately
+                    oscillator.disconnect();
+                } catch (e) { /* ignore if already stopped */ }
+            }
+            if (gainNode) {
+                try {
+                    gainNode.disconnect();
+                } catch (e) { /* ignore if already disconnected */ }
+            }
+
+            oscillator = audioCtx.createOscillator();
+            gainNode = audioCtx.createGain();
+
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(700, audioCtx.currentTime);
+            gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.5, audioCtx.currentTime + 0.005); // Fade in
+            gainNode.gain.linearRampToValueAtTime(0.5, audioCtx.currentTime + (duration / 1000) - 0.005); // Hold
+            gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + (duration / 1000)); // Fade out
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            oscillator.start(audioCtx.currentTime);
+            oscillator.stop(audioCtx.currentTime + duration / 1000);
+        };
+
+        const turnLightOn = (duration) => {
+            morseLight.classList.add('on');
+            // Ensure any previous timeout for turning off is cleared
+            if (morseLight.dataset.lightOffTimeout) {
+                clearTimeout(parseInt(morseLight.dataset.lightOffTimeout));
+            }
+            const timeoutId = setTimeout(() => {
+                morseLight.classList.remove('on');
+                morseLight.dataset.lightOffTimeout = '';
+            }, duration);
+            morseLight.dataset.lightOffTimeout = timeoutId;
+        };
+
+        const playMorseCharacter = (char, wpm, callback) => {
+            const ditMs = ditDuration(wpm);
+            const dahMs = ditMs * 3;
+            const interElementGapMs = ditMs; // Gap between elements in a char is 1 dit
+            const characterGapMs = ditMs * 3; // Gap between characters is 3 dits
+            const wordGapMs = ditMs * 7; // Gap between words is 7 dits
+
+            const morseChar = morseCodeMap[char.toLowerCase()];
+
+            if (!morseChar) {
+                // If character is not in map (e.g., unknown symbol or invalid), treat as a character gap
+                currentTimeout = setTimeout(callback, characterGapMs);
+                return;
+            }
+
+            if (morseChar === '/') { // Special handling for space (word gap)
+                currentTimeout = setTimeout(callback, wordGapMs);
+                return;
+            }
+
+            let index = 0;
+            const playNextElement = () => {
+                if (!morsePlaying) {
+                    callback();
+                    return;
+                }
+                if (index < morseChar.length) {
+                    const element = morseChar[index];
+                    let duration;
+                    if (element === '.') {
+                        duration = ditMs;
+                    } else if (element === '-') {
+                        duration = dahMs;
+                    }
+
+                    playTone(duration);
+                    turnLightOn(duration);
+
+                    index++;
+                    // Gap between elements
+                    currentTimeout = setTimeout(playNextElement, duration + interElementGapMs);
+                } else {
+                    // Gap after character, adjusting for the inter-element gap already applied after the last element
+                    currentTimeout = setTimeout(callback, characterGapMs - interElementGapMs);
+                }
+            };
+            playNextElement();
+        };
+
+        const playMorseSequence = (text, wpm) => {
+            if (morsePlaying) return; // Prevent multiple simultaneous playbacks
+            morsePlaying = true;
+            playMorseButton.textContent = 'Mengirim Pesan...';
+            playMorseButton.disabled = true;
+            stopMorseButton.disabled = false;
+
+            const morseTranslated = text.toLowerCase().split('').map(char => morseCodeMap[char] || '').join(' ');
+            morseOutput.textContent = morseTranslated.trim();
+
+            const characters = text.toLowerCase().split('');
+            let charIndex = 0;
+
+            const playNextCharacter = () => {
+                if (!morsePlaying || charIndex >= characters.length) {
+                    stopMorsePlayback();
+                    return;
+                }
+
+                const char = characters[charIndex];
+                playMorseCharacter(char, wpm, () => {
+                    charIndex++;
+                    // Add a very small delay to allow for cancellation processing before next character starts
+                    currentTimeout = setTimeout(playNextCharacter, 10);
+                });
+            };
+
+            playNextCharacter();
+        };
+
+        const stopMorsePlayback = () => {
+            morsePlaying = false;
+            if (oscillator) {
+                oscillator.stop(0);
+                oscillator.disconnect();
+                oscillator = null;
+            }
+            if (gainNode) {
+                gainNode.disconnect();
+                gainNode = null;
+            }
+            if (currentTimeout) {
+                clearTimeout(currentTimeout);
+                currentTimeout = null;
+            }
+            if (morseLight.dataset.lightOffTimeout) {
+                clearTimeout(parseInt(morseLight.dataset.lightOffTimeout));
+                morseLight.dataset.lightOffTimeout = '';
+            }
+            morseLight.classList.remove('on');
+            playMorseButton.textContent = 'Dengarkan Kode Morse';
+            playMorseButton.disabled = false;
+            stopMorseButton.disabled = true;
+        };
+
+        // --- Event Listeners ---
+        textInput.addEventListener('input', () => {
+            const text = textInput.value;
+            const morseTranslated = text.toLowerCase().split('').map(char => morseCodeMap[char] || '').join(' ');
+            morseOutput.textContent = morseTranslated.trim();
+        });
+
+        playMorseButton.addEventListener('click', () => {
+            const text = textInput.value;
+            if (text.trim() === '') {
+                alert('Silakan ketik pesan terlebih dahulu!');
+                return;
+            }
+            const wpm = parseInt(speedControl.value, 10);
+            playMorseSequence(text, wpm);
+        });
+
+        stopMorseButton.addEventListener('click', stopMorsePlayback);
+
+        speedControl.addEventListener('input', () => {
+            wpmValue.textContent = speedControl.value;
+            if (morsePlaying) {
+                // If playing, stop and restart with new speed
+                const text = textInput.value;
+                const wpm = parseInt(speedControl.value, 10);
+                stopMorsePlayback(); // Stop current playback
+                playMorseSequence(text, wpm); // Restart with new speed
+            }
+        });
+
+        // --- Video Player Functions ---
+        videoButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const videoId = this.dataset.videoId;
+                youtubePlayer.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+                // Optional: Update title dynamically if desired
+                // document.querySelector('.video-section h2').textContent = `Video: ${this.dataset.title}`;
+            });
+        });
+
+        // Initialize display
+        wpmValue.textContent = speedControl.value;
+        stopMorseButton.disabled = true; // Initially stop button is disabled
+    </script>
+</body>
+</html>
